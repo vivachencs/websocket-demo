@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>websocket</title>
+        <!-- 套路, node 文件查找特性, 先在当前目录查找, 然后...-->
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <div class="">
+            <button id="id-login" type="button" name="button">登录</button>
+            <button id="id-logout" type="button" name="button">登出</button>
+            <button id="id-send-message" type="button" name="button">发送</button>
+        </div>
+        <div class="">
+            <textarea id='my-textarea' name="name" rows="8" cols="80"></textarea>
+        </div>
+
+        <script>
+            var loginButton = document.querySelector('#id-login')
+
+            loginButton.addEventListener('click', function() {
+                // console.log('login click');
+                login()
+            })
+
+            var login = function() {
+                // 建立链接并返回一个 socket 对象
+                var socket = io.connect()
+
+                // 连接成功事件
+                socket.on('connect', function() {
+                    console.log('连接成功')
+                })
+
+                socket.on('whoAreYou', function() {
+                    var name = prompt('请输入你的名字', '')
+                    socket.emit('name', name)
+                })
+
+                // 消息事件, 自定义
+                socket.on('message', function(msg) {
+                    console.log(msg);
+                })
+
+                var sendButton = document.querySelector('#id-send-message')
+
+                sendButton.addEventListener('click', function() {
+                    var msg = document.querySelector('#my-textarea').value
+                    socket.emit('message', msg)
+                })
+
+                var logoutButton = document.querySelector('#id-logout')
+
+                logoutButton.addEventListener('click', function() {
+                    socket.disconnect()
+                })
+            }
+        </script>
+    </body>
+</html>
